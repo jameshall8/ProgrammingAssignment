@@ -34,7 +34,6 @@ public class Main {
 
 
         Random rand = new Random(); //instantiating a Random object
-
         String[] arr = {"+", "-"}; //creating an array of the available signs
 
 
@@ -82,26 +81,31 @@ public class Main {
                     break;
                 }
             }
+            if (i == 10){
+                CalculateTime(startTime); //calculating the time taken via the function and passing the start time
+            }
         }
-        CalculateTime(startTime); //calculating the time taken via the function and passing the start time
     }
-/*
-Test Plan For Check Digit Application
-error 1 = "You did not input a 5-digit number, or it included an invalid digit (0)"
-error 2 = "User input not an int"
+    /*
+    Test Plan For Check Digit Application
+    error 1 = "You did not input a 5-digit number, or it included an invalid digit (0)"
+    error 2 = "User input not an int"
+    TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REASON
+        1         9999          error 1               error 1               below lower bound
+        2         10000         error 1               error 1               number includes 0 (invalid digit)
+        3         11111         111113                111113                number within the bounds
+        4         99999         999997                999997                upper bound
+        5         111111        error 1               error 1               above upper bound and too many digits
+        6           0           error 1               error 1               a zero as input
+        7         hello         error 2               error 2               not an integer entered
+        8         0.12345       error 2               error 2               decimal number
+        9         25687         256876                256876                number from assignment brief
+     */
+    private static boolean ContainsZero(int input){ //checking if number inputted includes a 0
 
-TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REASON
-    1         9999          error 1               error 1               below lower bound
-    2         10000         error 1               error 1               number includes 0 (invalid digit)
-    3         11111         111113                111113                number within the bounds
-    4         99999         999997                999997                upper bound
-    5         111111        error 1               error 1               above upper bound and too many digits
-    6           0           error 1               error 1               a zero as input
-    7         hello         error 2               error 2               not an integer entered
-    8         0.12345       error 2               error 2               decimal number
-    9         25687         256876                256876                number from assignment brief
+        return !String.valueOf(input).contains("0"); //check number is 5 digits and doesn't include a 0
 
- */
+    }
     private static void CheckDigit() {
         String Message = """
                 Check-Digit Calculator
@@ -115,9 +119,10 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
 
         while (correct) {
             System.out.println(Message); //print message
+            int length = 5;
             try { //try to catch the exceptions if bad input
                 int UserInput = sc.nextInt(); //setting input as INT input
-                if (UserInput <= 99999 && UserInput >= 10000 && !String.valueOf(UserInput).contains("0")) { //checking it's a 5-digit number and that it doesn't include 0
+                if (ContainsZero(UserInput) && CheckLength(UserInput, length)) { //checking it's a 5-digit number and that it doesn't include 0
                     while (UserInput > 0) { //while the user input is larger than 0 (which it will be at the start as only allowing 5-digit numbers)
                         NumList.add(UserInput % 10); //modulo 10 will get us the last digit and then add it to our num-list array
                         UserInput = UserInput / 10; //divide the number by 10 to remove last digit
@@ -125,7 +130,7 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
                     Collections.reverse(NumList); //the numbers will need to be reversed in the list as we added them back to front
                     int together = CalculateCheck(NumList); // calling to calculate check function and passing it our array
 
-                    int CheckNumber = together % 10; //the check number is together modulo 10
+                    int CheckNumber = together % 10; //the check number is together modulo 10 (last digit)
 
 
                     if (CheckNumber != 0) { //if the check number is not 0
@@ -136,8 +141,6 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
                     //above line formats our array, so it just displays the numbers and not [] and ,
                     System.out.println("The 6 digit final number is: " + FormattedString); // displaying the formatted array
                     correct = false; //getting out of while loop
-
-
                 } else { //user input is either not 5 digits or includes a 0 which is not allowed
                     System.out.println("You did not input a 5 digit number or it included a invalid digit (0)");
                     sc.nextLine();
@@ -147,6 +150,11 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
                 sc.nextLine();
             }
         }
+    }
+    private static boolean CheckLength(int num, int wantedLength){ //checks the length of user input
+        String stringValue = String.valueOf(num); //converts user input to a string so we can use built in string methods
+        int length = stringValue.length(); //get the string length
+        return length == wantedLength; //return the boolean value of if length is the same as the length wanted
     }
     private static int CalculateCheck(List<Integer> List){ //passing an integer list and calling it list
 
@@ -161,11 +169,12 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
                 Please enter 6-digit number to check:""";
         List<Integer> NumList = new ArrayList<>();
         boolean correct = true;
+        int length = 6;
         while (correct) {
             System.out.println(Message);
             try {
                 int UserInput = sc.nextInt();
-                if (UserInput <= 999999 && UserInput >= 100000 && !String.valueOf(UserInput).contains("0")) {
+                if (CheckLength(UserInput, length)&& !String.valueOf(UserInput).contains("0")) {
                     while (UserInput > 0) {
                         NumList.add(UserInput % 10);
                         UserInput = UserInput / 10;
@@ -196,18 +205,18 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
         }
     }
 
-    private static double FindSquare(double number, double accuracy) {
-        double lowBound = 0;
-        double upBound = number;
-        double average = 0;
+    private static double FindSquare(double number, double accuracy) { //find square function and passing in the number and accuracy
+        double lowBound = 0; //declaring lower bound
+        double upBound = number; //declaring upper bound as the number
+        double average = 0; //declaring a double for the average
 
 
         while (upBound - lowBound > accuracy) {
             average = lowBound + (upBound - lowBound) / 2; // finding the middle value
-            if (average * average > number) {
-                upBound = average;
+            if (average * average > number) { //the averages times is greater than the number
+                upBound = average; //setting the upper bound as the output
             } else {
-                lowBound = average;
+                lowBound = average; //setting the lower bound as average
             }
         }
         return average;
@@ -220,9 +229,10 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
             System.out.println("Please Enter A Positive Number: "); //ask user for a positive number
             try { //try to set UserAnswer as a double
                 int UserAnswer = sc.nextInt();
-                if (UserAnswer > 0) { //if it's not a negative number inputted
-                    System.out.println("How many decimal places do you want the solution calculated to: 1-7");//ask user for input for accuracy
+                if (UserAnswer > 0) { //if it's not a negative number inputtedSystem.out.println("How many decimal places do you want the solution calculated to: 1-7");//ask user for input for accuracy
                     try {// to set accuracy variable as input
+                        System.out.println("Please Enter How many decimal places: "); //ask user for a positive number for decimal places
+
                         int accuracy = sc.nextInt();
                         if (accuracy >= 1 && accuracy <= 7) { //if number inputted is between 1 and 7
                             switch (accuracy) { //switch statement for declaring accuracy depending on number input
@@ -247,7 +257,7 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
                             System.out.println("Incorrect Input");
                         }
                     }
-                        catch (Exception e) { //number not valid therefore throws exception
+                    catch (Exception e) { //number not valid therefore throws exception
                         System.out.println("You did not enter a valid number!");
                         sc.nextLine();
 
@@ -256,8 +266,7 @@ TEST_CASE#    INPUT       EXPECTED OUTPUT      ACTUAL OUTPUT                 REA
             } catch (Exception e) { //number not valid so throws exception
                 System.out.println("You did not enter a valid number!");
                 sc.nextLine();
-            }
-        }
+            }}
     }
 
 
