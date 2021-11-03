@@ -4,7 +4,7 @@ import java.util.*; //importing java util library
 public class Main {
     static java.util.Scanner sc = new Scanner(System.in); // instantiating scanner to use in all methods in the class
 
-    private static void PressEnter() { //This method allows the user to press enter before starting the application
+    private static void PressEnter() { //This method allows the user to press enter before starting the application!
         System.out.println("Press enter to continue: ");
         sc.nextLine();
         sc.nextLine();
